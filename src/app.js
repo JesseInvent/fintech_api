@@ -11,9 +11,12 @@ import AppError from "./utils/AppError.js"
 
 dotenv.config()
 
-await connect()
+// await connect()
 
 const app = express()
+
+// Body Parser
+app.use(express.json())
 
 // CORS middleware
 app.use(cors())
@@ -25,6 +28,10 @@ app.use(xss())
 app.use(helmet())
 
 if (process.env.NODE_ENV !== 'production') app.use(morgan("combined"))
+
+app.get('/api/v1', (req, res, next) => {
+    return res.status(200).send()
+})
 
 app.use('/api/v1/auth', authRoutes)
 
