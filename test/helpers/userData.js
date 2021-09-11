@@ -41,6 +41,20 @@ class User {
         }
     }
 
+    static getUserInvalidLoginDetails() {
+        return {
+            email: this.email,
+            password: '1232123'
+        }
+    }
+
+    static getUserValidLoginDetails() {
+        return {
+            email: this.email,
+            password: this.password
+        }
+    }
+
 }
 
 export { User }

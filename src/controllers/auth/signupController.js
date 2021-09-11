@@ -1,30 +1,35 @@
 import AppError from '../../utils/AppError.js'
 import asyncHandler from '../../utils/asyncHandler.js'
 import User from '../../models/User.js'
+import { createAuthToken } from '../../utils/jwtFunction.js'
+import { sterilizeUserModel } from "../../utils/sterilizers.js"
 
 
 export default asyncHandler( async (req, res, next) => {
 
     if (!req.body.name || !req.body.email || !req.body.password) {
         next(
-           new AppError(res, 400, "You missed a required field, please check fields submitted 🙂")
+           new AppError({ res, statusCode:400, message: "You missed a required field, please check fields submitted 🙂"})
         )
     }
 
     if (req.body.password !== req.body.confirm_password) {
         next(
-            new AppError(res, 400, "Passwords do not 😔")
+            new AppError({ res, statusCode:400, message: "Passwords do not 😔"})
          )
     }
 
     if (req.body.password.length < 7) {
         next(
-            new AppError(res, 400, "Passwords too short, must not be less 6 digits 🙂")
+            new AppError({ res, statusCode:400, message: "Passwords too short, must not be less 6 digits 🙂"})
         )
     }
 
-    const user = await User.create({...req.body})
-    // console.log(user);
+    let user = await User.create({...req.body})
+  
+    const auth_Token = createAuthToken(user)
 
-    return res.status(201).json({ message: 'Signup successful', user })
+    user = sterilizeUserModel(user.get())
+
+    return res.status(201).json({ message: 'Login successful', user, auth_Token  })
 })

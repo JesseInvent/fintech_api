@@ -2,12 +2,22 @@ import request from 'supertest'
 import { assert } from 'chai'
 import app from '../../../src/app.js'
 import { User } from '../../helpers/userData.js'
+import UserModel from '../../../src/models/User.js'
 
-describe("Users Signup and Authentication tests", () => {
+describe("Users Signup and Authentication tests", async () => {
+
+    // beforeEach(async () => {
+    //     await UserModel.sync()
+    // })
+
+   beforeEach( async () => {
+        await UserModel.destroy({
+            truncate: true
+        })
+    })
+  
 
     it("Tests a user must provide name, email and password when signing up", async () => {
-
-        // const user = new User
 
         const response = await request(app).post('/api/v1/auth/signup').send(User.getUserWithoutEmail())
 
@@ -41,10 +51,53 @@ describe("Users Signup and Authentication tests", () => {
 
         const response = await request(app).post('/api/v1/auth/signup').send(User.getUserWithValidDetails())
 
-        console.log(response.body);
+        console.log(response);
 
         assert.equal(response.statusCode, 201)
         assert.exists(response.body.message)
+        assert.exists(response.body.user)
+        assert.exists(response.body.auth_Token)
     })
+
+    it("Tests a user cannot login with providing details", async () => {
+
+        const response = await request(app).post('/api/v1/auth/login').send({})
+
+        // console.log(response);
+
+        assert.equal(response.statusCode, 400)
+        assert.exists(response.body.message)
+    })
+
+
+    it("Tests a user cannot login with invalid details", async () => {
+
+        await request(app).post('/api/v1/auth/signup').send(User.getUserWithValidDetails())
+
+        const response = await request(app).post('/api/v1/auth/login').send(User.getUserInvalidLoginDetails())
+
+        // console.log(response.body);
+
+        assert.equal(response.statusCode, 400)
+        assert.exists(response.body.message)
+    })
+
+
+    it("Tests a user can login with valid details", async () => {
+
+        await request(app).post('/api/v1/auth/signup').send(User.getUserWithValidDetails())
+
+        const response = await request(app).post('/api/v1/auth/login').send(User.getUserValidLoginDetails())
+
+        // console.log(response.body);
+
+        assert.equal(response.statusCode, 200)
+        assert.exists(response.body.message)
+        assert.exists(response.body.user)
+        assert.exists(response.body.auth_Token)
+
+
+    })
+
 
 })

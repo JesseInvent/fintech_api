@@ -13,7 +13,8 @@ export default async () => {
             sequelize = new Sequelize(process.env.DATABASE_NAME, process.env.MYSQL_USERNAME, process.env.MYSQL_PASSWORD, {
                 host: process.env.MYSQL_HOST,
                 port: process.env.MYSQL_PORT,
-                dialect: 'mysql'
+                dialect: 'mysql',
+                logging: false
             })
         }
 
@@ -21,7 +22,8 @@ export default async () => {
 
             sequelize = new Sequelize({
                 dialect: 'sqlite',
-                storage: path.resolve('DB/database.sqlite')
+                storage: path.resolve('test/DB/database.sqlite'),
+                logging: false
             })
         }
 

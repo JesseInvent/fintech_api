@@ -1,7 +1,7 @@
 class AppError extends Error {
     
-    constructor(responseObject, statusCode, message) {
-        return responseObject.status(statusCode).json({ message })
+    constructor({res, statusCode, message}) {
+        return res.status(statusCode).json({ message })
     }
 }
 

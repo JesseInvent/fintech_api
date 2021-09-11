@@ -1,3 +1,4 @@
+import { hash } from '../utils/bcryptFunction.js';
 import sequelize from 'sequelize'
 import connectDB from '../DB/connect.js'
 
@@ -16,10 +17,14 @@ User.init(
         email: {
             type: DataTypes.STRING,
             allowNull: false
-        },
+        },  
         password: {
             type: DataTypes.STRING,
-            allowNull: false
+            allowNull: false,
+           set(value) {
+                const hashed = hash(value)
+                this.setDataValue('password', hashed)
+            }
         },
         bank_name: {
             type: DataTypes.STRING,
