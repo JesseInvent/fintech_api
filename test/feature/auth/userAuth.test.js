@@ -51,7 +51,7 @@ describe("Users Signup and Authentication tests", async () => {
 
         const response = await request(app).post('/api/v1/auth/signup').send(User.getUserWithValidDetails())
 
-        console.log(response);
+        // console.log(response);
 
         assert.equal(response.statusCode, 201)
         assert.exists(response.body.message)
