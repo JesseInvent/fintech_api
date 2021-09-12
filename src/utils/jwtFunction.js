@@ -8,3 +8,8 @@ export const createAuthToken = (user) => {
     return token
 
 }
+
+export const verifyAndDecodeAuthToken = (token) => {
+
+   return jwt.verify(token, process.env.JWT_SECRET)
+}

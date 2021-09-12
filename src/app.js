@@ -33,6 +33,10 @@ app.get('/api/v1', (req, res, next) => {
     return res.status(200).send()
 })
 
+// app.post('/api/v1/wallet/add_beneficiary', (req, res, next) => {
+//     return res.status(200).send()
+// })
+
 app.use('/api/v1/auth', authRoutes)
 
 app.use('/api/v1/wallet', walletRoutes)

@@ -31,11 +31,11 @@ export default asyncHandler(async (req, res, next) => {
         )
     }
     
-    const auth_Token = createAuthToken(user)
+    const auth_token = createAuthToken(user)
 
     user = sterilizeUserModel(user.get())
 
-    return res.status(200).json({ message: 'Login successful', user, auth_Token  })
+    return res.status(200).json({ message: 'Login successful', user, auth_token  })
 
 
 })

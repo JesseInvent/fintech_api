@@ -1,3 +1,5 @@
+import request from 'supertest'
+import app from '../../src/app.js'
 
 class User {
 
@@ -6,6 +8,9 @@ class User {
     static password = '12345678'
     static confirm_password = '12345678'
     static short_password = '123456'
+    static bank_name = 'first_bank'
+    static account_number = '03847693845'
+    static sort_code = '212'
 
     static getUserWithValidDetails () {
 
@@ -53,6 +58,23 @@ class User {
             email: this.email,
             password: this.password
         }
+    }
+
+    static getUserBankDetails() {
+        return {
+           bank_name: this.bank_name,
+           account_number: this.account_number,
+           sort_code: this.sort_code
+        }
+    }
+
+    // User actions
+    static async signUp() {
+        return await request(app).post('/api/v1/auth/signup').send(User.getUserWithValidDetails())
+    }
+
+    static async login() {
+        return await request(app).post('/api/v1/auth/login').send(User.getUserValidLoginDetails())
     }
 
 }
