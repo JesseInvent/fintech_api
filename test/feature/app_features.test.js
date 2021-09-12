@@ -31,7 +31,7 @@ describe('Application main feauture tests', () => {
                      .post('/api/v1/wallet/add_beneficiary').send(User.getUserBankDetails())
                      .set('Authorization', `Bearer ${auth_token}`)
  
-        console.log(response.body);
+      //   console.log(response.body);
  
         assert.equal(202, response.statusCode)
  

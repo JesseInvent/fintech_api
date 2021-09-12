@@ -3,7 +3,6 @@ import asyncHandler from "../../utils/asyncHandler.js";
 
 export const addBeneficiary = asyncHandler( async (req, res, next) => {
 
-    console.log(req.body);
    await User.update({...req.body}, {
         where: {
             id: req.userId
