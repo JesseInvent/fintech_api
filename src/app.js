@@ -7,6 +7,7 @@ import xss from "xss-clean"
 import helmet from "helmet"
 import authRoutes from "./routes/v1/authRoutes.js"
 import walletRoutes from "./routes/v1/walletRoutes.js"
+import paymentRoutes from "./routes/v1/paymentRoutes.js"
 import AppError from "./utils/AppError.js"
 
 dotenv.config()
@@ -40,6 +41,8 @@ app.get('/api/v1', (req, res, next) => {
 app.use('/api/v1/auth', authRoutes)
 
 app.use('/api/v1/wallet', walletRoutes)
+
+app.use('/api/v1/payment', paymentRoutes)
 
 app.use('*', (req, res, next) => {
     next(
