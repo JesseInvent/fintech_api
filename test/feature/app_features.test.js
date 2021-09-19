@@ -6,6 +6,12 @@ import UserModel from '../../src/models/User.js'
 
 describe('Application main feauture tests', () => {
 
+    beforeEach( async () => {
+        await UserModel.destroy({
+            truncate: true
+        })
+    })
+
     it('Tests a user must provide auth token to add bank account details', async () => {
 
        await User.signUp()
@@ -16,7 +22,7 @@ describe('Application main feauture tests', () => {
        const response = await request(app)
                     .post('/api/v1/wallet/add_beneficiary').send(User.getUserBankDetails())
 
-       assert.equal(403, response.statusCode)
+       assert.equal(401, response.statusCode)
 
     })
 
@@ -36,6 +42,33 @@ describe('Application main feauture tests', () => {
         assert.equal(202, response.statusCode)
  
      })
- 
+
+    
+    it('Tests a user cannot request for payment url without auth token', async () => {
+
+        const response = await request(app).get('/api/v1/payment/initialize')
+
+    //  console.log(response);
+
+        assert.equal(401, response.status)
+
+    })
+
+    it('Tests a user can request for payment url', async () => {
+
+    await User.signUp()
+    const loginResponse = await User.login()
+
+    const { auth_token } = loginResponse.body
+        const response = await request(app).get('/api/v1/payment/initialize')
+        .set('Authorization', `Bearer ${auth_token}`)
+
+        //  console.log(response);
+
+        assert.equal(202, response.status)
+        assert.exists(response.body.payment_url)
+
+    })
+
 
 })

@@ -34,5 +34,8 @@ export default asyncHandler( async (req, res, next) => {
     user = sterilizeUserModel(user.get())
     wallet = sterilizeWalletModel(wallet.get())
 
-    return res.status(201).json({ message: 'Login successful', user, wallet, auth_token  })
+    // Send successful signup email
+
+    return res.status(201).json({ message: 'Signup successful', user, wallet, auth_token  })
+    
 })

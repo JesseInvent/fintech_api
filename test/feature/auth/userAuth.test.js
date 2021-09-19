@@ -94,7 +94,6 @@ describe("Users Signup and Authentication tests", async () => {
         assert.exists(response.body.user)
         assert.exists(response.body.auth_token)
 
-
     })
 
 

@@ -8,7 +8,7 @@ export default asyncHandler(async (req, res, next) => {
 
     if(!authorizationHeader) {
         next(
-            new AppError({res, statusCode: 403, message: 'Authentication failed'})
+            new AppError({res, statusCode: 401, message: 'Authentication failed'})
         )
     }
 
@@ -18,7 +18,7 @@ export default asyncHandler(async (req, res, next) => {
 
    if(!decodedUser) {
         next(
-            new AppError({res, statusCode: 403, message: 'Authentication failed'})
+            new AppError({res, statusCode: 401, message: 'Authentication failed'})
         )
    }
 

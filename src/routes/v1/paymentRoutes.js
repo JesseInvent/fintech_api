@@ -1,4 +1,6 @@
 import { Router } from "express"
+import initializePayment from "../../controllers/payment/initializePayment.js"
+import verifyUserAuthToken from '../../middlewares/auth/verifyUserAuthToken.js';
 
 const router = Router()
 
@@ -8,7 +10,7 @@ router.get('/', (req, res, next) => {
 })
 
 // ** /api/v1/payment/initialize 
-router.get('/initialize')
+router.get('/initialize', verifyUserAuthToken, initializePayment)
 
 // ** /api/v1/wallet/fun
 export default router

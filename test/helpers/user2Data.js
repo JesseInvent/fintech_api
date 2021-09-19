@@ -1,16 +1,16 @@
 import request from 'supertest'
 import app from '../../src/app.js'
 
-class User {
+class User2 {
 
-    static full_name = 'John Doe'
-    static email = 'johndoe@gmail.com'
+    static full_name = 'Jane Doe'
+    static email = 'janedoe@gmail.com'
     static password = '12345678'
     static confirm_password = '12345678'
     static short_password = '123456'
-    static bank_name = 'first bank'
-    static account_number = '03847693845'
-    static sort_code = '212'
+    static bank_name = 'GT bank'
+    static account_number = '56543185649'
+    static sort_code = '856'
 
     static getUserWithValidDetails () {
 
@@ -70,13 +70,13 @@ class User {
 
     // User actions
     static async signUp() {
-        return await request(app).post('/api/v1/auth/signup').send(User.getUserWithValidDetails())
+        return await request(app).post('/api/v1/auth/signup').send(User2.getUserWithValidDetails())
     }
 
     static async login() {
-        return await request(app).post('/api/v1/auth/login').send(User.getUserValidLoginDetails())
+        return await request(app).post('/api/v1/auth/login').send(User2.getUserValidLoginDetails())
     }
 
 }
 
-export { User }
+export { User2 }
