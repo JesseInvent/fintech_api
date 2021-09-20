@@ -3,6 +3,7 @@ import { assert } from 'chai'
 import app from '../../../src/app.js'
 import { User } from '../../helpers/userData.js'
 import UserModel from '../../../src/models/User.js'
+import Wallet from '../../../src/models/Wallet.js'
 
 describe("Users Signup and Authentication tests", async () => {
 
@@ -12,6 +13,10 @@ describe("Users Signup and Authentication tests", async () => {
 
    beforeEach( async () => {
         await UserModel.destroy({
+            truncate: true
+        })
+
+        Wallet.destroy({
             truncate: true
         })
     })
@@ -59,7 +64,7 @@ describe("Users Signup and Authentication tests", async () => {
         assert.exists(response.body.auth_token)
     })
 
-    it("Tests a user cannot login with providing details", async () => {
+    it("Tests a user cannot login without providing details", async () => {
 
         const response = await request(app).post('/api/v1/auth/login').send({})
 

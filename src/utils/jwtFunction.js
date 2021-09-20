@@ -2,6 +2,8 @@ import jwt from "jsonwebtoken"
 
 export const createAuthToken = (user) => {
 
+  // console.log(user);
+
     try {
         const token = jwt.sign({ id: user.id, email: user.email }, 
                     process. env.JWT_SECRET, {
@@ -18,6 +20,8 @@ export const createAuthToken = (user) => {
 export const verifyAndDecodeAuthToken = (token) => {
 
   try {
+
+    // console.log(token);
 
     return jwt.verify(token, process.env.JWT_SECRET)
 

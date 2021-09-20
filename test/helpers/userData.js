@@ -77,6 +77,11 @@ class User {
         return await request(app).post('/api/v1/auth/login').send(User.getUserValidLoginDetails())
     }
 
+    static async addBeneficiary(authToken) {
+     return   await request(app)
+                        .post('/api/v1/wallet/add_beneficiary').send(User.getUserBankDetails())
+                        .set('Authorization', `Bearer ${authToken}`)
+    }
 }
 
 export { User }

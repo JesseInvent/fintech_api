@@ -3,7 +3,7 @@ import asyncHandler from '../../utils/asyncHandler.js'
 import User from '../../models/User.js'
 import { createAuthToken } from '../../utils/jwtFunction.js'
 import { sterilizeUserModel, sterilizeWalletModel } from "../../utils/sterilizers.js"
-import { createUserWallet } from "../../utils/userWalletFunctions.js"
+import { createUserWallet } from "../../utils/wallet/userWalletFunctions.js"
 
 export default asyncHandler( async (req, res, next) => {
 
@@ -22,6 +22,16 @@ export default asyncHandler( async (req, res, next) => {
     if (req.body.password.length < 7) {
         next(
             new AppError({ res, statusCode: 400, message: "Passwords too short, must not be less 6 digits 🙂"})
+        )
+    }
+
+    let checkUser = await User.findOne({
+            where: { email: req.body.email }
+        })
+
+    if (checkUser) {
+        next(
+            new AppError({ res, statusCode: 400, message: "A user will this account alread exists 🙂"})
         )
     }
 

@@ -5,7 +5,7 @@ import { User } from '../helpers/userData.js'
 import { User2 } from '../helpers/user2Data.js'
 import UserModel from '../../src/models/User.js'
 import Wallet from '../../src/models/Wallet.js'
-import { fundUserWallet } from "../../src/utils/userWalletFunctions.js"
+import { fundUserWallet } from "../../src/utils/wallet/userWalletFunctions.js"
 
 describe('Application main feauture tests', () => {
 
@@ -22,9 +22,6 @@ describe('Application main feauture tests', () => {
     it('Tests a user must provide auth token to add bank account details', async () => {
 
        await User.signUp()
-       const loginResponse = await User.login()
-
-       const { auth_token } = loginResponse.body
 
        const response = await request(app)
                     .post('/api/v1/wallet/add_beneficiary').send(User.getUserBankDetails())
@@ -40,9 +37,7 @@ describe('Application main feauture tests', () => {
  
         const { auth_token } = loginResponse.body
  
-        const response = await request(app)
-                     .post('/api/v1/wallet/add_beneficiary').send(User.getUserBankDetails())
-                     .set('Authorization', `Bearer ${auth_token}`)
+        const response = await User.addBeneficiary(auth_token)
  
         // console.log(response.body);
  
@@ -123,7 +118,6 @@ describe('Application main feauture tests', () => {
         const login1response = await User.login()
         const { auth_token: user1_auth_token } = login1response.body
 
-
         // User 2 signup
         const user2signupResponse = await User2.signUp()
 
@@ -142,5 +136,70 @@ describe('Application main feauture tests', () => {
         assert.equal(200, response.status)
     })
 
+    it('Tests that an unauthenticated user cannot request from withdrawal', async () => {
+
+        await User.signUp()
+
+        const response = await request(app).post('/api/v1/wallet/withdraw')
+        
+        assert.equal(401, response.status)
+
+    })
+
+    it('Tests that a user must add beneficiary before withdrawal', async () => {
+
+        await User.signUp()
+        const loginResponse = await User.login()
+        const { auth_token } = loginResponse.body
+
+        const response = await request(app).post('/api/v1/wallet/withdraw')
+                        .set('Authorization', `Bearer ${auth_token}`)
+                        .send({ amount: 5000, account_password: User.password })
+
+        // console.log(response.body);
+        
+        assert.equal(422, response.status)
+
+    })
+
+    it('Tests that an authenticated user can request for withdrawal with invalid account password', async () => {
+
+        await User.signUp()
+        const loginResponse = await User.login()
+
+        const { auth_token } = loginResponse.body
+
+        // abstract
+        await User.addBeneficiary(auth_token)
+
+        const response = await request(app).post('/api/v1/wallet/withdraw')
+                        .set('Authorization', `Bearer ${auth_token}`)
+                        .send({ amount: 5000, account_password: 'wrongPaaword' })
+
+        // console.log(response.body);
+        
+        assert.equal(401, response.status)
+
+    })
+
+
+    it('Tests that an authenticated user can request for withdrawal', async () => {
+
+        await User.signUp()
+        const loginResponse = await User.login()
+
+        const { auth_token } = loginResponse.body
+
+        await User.addBeneficiary(auth_token)
+
+        const response = await request(app).post('/api/v1/wallet/withdraw')
+                        .set('Authorization', `Bearer ${auth_token}`)
+                        .send({ amount: 5000, account_password: User.password })
+
+        // console.log(response.body);
+        
+        assert.equal(200, response.status)
+
+    })
 
 })

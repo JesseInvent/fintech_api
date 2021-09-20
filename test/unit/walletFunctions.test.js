@@ -1,7 +1,7 @@
 import { assert } from "chai"
 import { User } from '../helpers/userData.js'
 import { User2 } from '../helpers/user2Data.js'
-import { fundUserWallet, transferFundsToAnotherUser } from "../../src/utils/userWalletFunctions.js"
+import { creditUserWallet, debitUserWallet, fundUserWallet, transferFundsToAnotherUser } from "../../src/utils/wallet/userWalletFunctions.js"
 import UserModel from '../../src/models/User.js'
 import Wallet from "../../src/models/Wallet.js"
 
@@ -17,21 +17,59 @@ describe('Wallet functions unit tests', () => {
         })
     })
 
+    it('Tests the credit user wallet module increments the amount on wallet table', async () => {
+
+        await User.signUp()
+        const loginResponse = await User.login()
+
+        const { user } = loginResponse.body;
+        const creditAmount =  5000;
+
+        const userWallet = await Wallet.findOne({ where: { email: user.email } })
+
+        await creditUserWallet({ email: user.email, amount: creditAmount })
+
+        const userUpdatedWallet = await Wallet.findOne({ where: { email: user.email } })
+
+        assert.equal(userUpdatedWallet.amount, userWallet.amount + creditAmount)
+    })
+
+    it('Tests the debit user wallet module decrements the amount on wallet table', async () => {
+
+        await User.signUp()
+        const loginResponse = await User.login()
+
+        const { user } = loginResponse.body
+
+        const creditAmount = 10000
+        const debitAmount =  5000
+
+        await creditUserWallet({ email: user.email, amount: creditAmount })
+
+        const userWallet = await Wallet.findOne({ where: { email: user.email } })
+
+        await debitUserWallet({ email: user.email, amount: debitAmount })
+
+        const userUpdatedWallet = await Wallet.findOne({ where: { email: user.email } })
+
+        assert.equal(userUpdatedWallet.amount, userWallet.amount - debitAmount)
+    })
+
     it('Tests the fund wallet module increments the amount on wallet table', async () => {
 
         await User.signUp()
         const loginResponse = await User.login()
 
         const { user } = loginResponse.body;
-        const amount =  5000;
+        const fundAmount =  5000;
 
         const userWallet = await Wallet.findOne({ where: { email: user.email } })
 
-        await fundUserWallet({ email: user.email, amount: amount })
+        await fundUserWallet({ email: user.email, amount: fundAmount })
 
         const userUpdatedWallet = await Wallet.findOne({ where: { email: user.email } })
 
-        assert.equal(userUpdatedWallet.amount, userWallet.amount + amount)
+        assert.equal(userUpdatedWallet.amount, userWallet.amount + fundAmount)
     })
 
     it('Tests the transfer funds to another user wallet module increments the amount on wallet table', async () => {
@@ -50,12 +88,12 @@ describe('Wallet functions unit tests', () => {
         const { user: user2 } = login2Response.body;
 
         // Fund User 1 wallet
-        fundUserWallet({amount: 10000, email: user1.email})
+        await fundUserWallet({amount: 10000, email: user1.email})
 
         // Get both users wallet
         const user1Wallet = await Wallet.findOne({ 
                 where: { email: user1.email } 
-            })
+        })
 
         const user2Wallet = await Wallet.findOne({ 
             where: { email: user2.email } 
@@ -78,5 +116,7 @@ describe('Wallet functions unit tests', () => {
         // Assert User 2 wallet was credited with transferAmount
         assert.equal(user2UpdatedWallet.amount, user2Wallet.amount + transferAmount)
     })
+
+
     
 })

@@ -1,6 +1,6 @@
 import { Router } from "express"
 import { addBeneficiary } from "../../controllers/wallet/beneficiaryController.js"
-import { fundWallet, transferFundsToUser } from "../../controllers/wallet/walletController.js"
+import { fundWallet, transferFundsToUser, withdrawFromUserWallet } from "../../controllers/wallet/walletController.js"
 import verifyUserAuthToken from "../../middlewares/auth/verifyUserAuthToken.js"
 
 const router = Router()
@@ -28,6 +28,9 @@ router.post('/fund', fundWallet)
 
 //** /api/v1/wallet/transfer
 router.post('/transfer', verifyUserAuthToken, transferFundsToUser)
+
+//** /api/v1/wallet/withdraw
+router.post('/withdraw', verifyUserAuthToken, withdrawFromUserWallet)
 
 
 export default router
