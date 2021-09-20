@@ -5,7 +5,7 @@ export const addBeneficiary = asyncHandler( async (req, res, next) => {
 
    await User.update({...req.body}, {
         where: {
-            id: req.userId
+            id: req.user.id
         }
     })
 

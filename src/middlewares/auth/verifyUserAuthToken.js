@@ -22,7 +22,7 @@ export default asyncHandler(async (req, res, next) => {
         )
    }
 
-   req.userId = decodedUser.id
+   req.user = decodedUser
 
    next()
 

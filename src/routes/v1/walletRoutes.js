@@ -1,8 +1,7 @@
 import { Router } from "express"
 import { addBeneficiary } from "../../controllers/wallet/beneficiaryController.js"
-import { fundWallet } from "../../controllers/wallet/walletController.js"
+import { fundWallet, transferFundsToUser } from "../../controllers/wallet/walletController.js"
 import verifyUserAuthToken from "../../middlewares/auth/verifyUserAuthToken.js"
-import { verifyAndDecodeAuthToken } from "../../utils/jwtFunction.js"
 
 const router = Router()
 
@@ -14,7 +13,21 @@ router.get('/', (req, res, next) => {
 // ** /api/v1/wallet/add_beneficiary 
 router.post('/add_beneficiary', verifyUserAuthToken, addBeneficiary)
 
+
 // ** /api/v1/wallet/fund
-// router.post('/fund', verifyAndDecodeAuthToken, fundWallet)
+
+/**
+ * Please note this endpoint is for testing purposes and its temporary
+ * 
+ * Wallet funding ideally will be done through a payment gateway
+ * and triggered with a webhook event
+ * This endpoint somehow mimmicks a webhook event call
+ */
+router.post('/fund', fundWallet)
+
+
+//** /api/v1/wallet/transfer
+router.post('/transfer', verifyUserAuthToken, transferFundsToUser)
+
 
 export default router

@@ -1,7 +1,7 @@
 class AppError extends Error {
     
     constructor({res, statusCode, message}) {
-        return res.status(statusCode).json({ message })
+        return res.status(statusCode).json({ status: 'fail', message })
     }
 }
 

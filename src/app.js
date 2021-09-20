@@ -46,7 +46,7 @@ app.use('/api/v1/payment', paymentRoutes)
 
 app.use('*', (req, res, next) => {
     next(
-        new AppError(res, 404, 'Invalid Route 🙂')
+        new AppError({res, statusCode: 404, message: 'Invalid Route 🙂'})
     )
 })
 

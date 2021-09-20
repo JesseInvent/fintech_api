@@ -36,9 +36,11 @@ describe('Wallet functions unit tests', () => {
 
     it('Tests the transfer funds to another user wallet module increments the amount on wallet table', async () => {
 
+        // User 1 signup and login
         await User.signUp()
         const login1Response = await User.login()
 
+        // User 2 signup and login
         await User2.signUp()
         const login2Response = await User2.login()
 
@@ -47,9 +49,10 @@ describe('Wallet functions unit tests', () => {
 
         const { user: user2 } = login2Response.body;
 
-        // Fund user 1 wallet
+        // Fund User 1 wallet
         fundUserWallet({amount: 10000, email: user1.email})
 
+        // Get both users wallet
         const user1Wallet = await Wallet.findOne({ 
                 where: { email: user1.email } 
             })
@@ -58,20 +61,21 @@ describe('Wallet functions unit tests', () => {
             where: { email: user2.email } 
         })
 
+        // Transfer funds from user 1 to user 2 wallet 
         await transferFundsToAnotherUser({
                 senderEmail: user1.email,
                 destinationEmail: user2.email,
                 amount: transferAmount
             })
 
+        // Get wallets after transfer
         const user1UpdatedWallet = await Wallet.findOne({ where: { email: user1.email } })
-
         const user2UpdatedWallet = await Wallet.findOne({ where: { email: user2.email } })
 
-        // Sender's wallet was debited of transferAmount
+        // Assert User 1 wallet was debited of transferAmount
         assert.equal(user1UpdatedWallet.amount, user1Wallet.amount - transferAmount)
 
-        // Reciepient's wallet was credited with transferAmount
+        // Assert User 2 wallet was credited with transferAmount
         assert.equal(user2UpdatedWallet.amount, user2Wallet.amount + transferAmount)
     })
     

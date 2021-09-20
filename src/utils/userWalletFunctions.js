@@ -33,4 +33,6 @@ export const transferFundsToAnotherUser = async ({ amount, senderEmail, destinat
 
     await reciepientWallet.increment({ amount })
 
+    return true
+
 }
