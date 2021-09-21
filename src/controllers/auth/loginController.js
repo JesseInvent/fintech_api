@@ -1,6 +1,7 @@
 import User from "../../models/User.js";
 import AppError from "../../utils/AppError.js";
 import asyncHandler from "../../utils/asyncHandler.js";
+import authenticateUserLoginDetails from "../../utils/auth/authenticateUserLoginDetails.js";
 import { compareHash } from "../../utils/bcryptFunction.js"
 import { createAuthToken } from "../../utils/jwtFunction.js";
 import { sterilizeUserModel } from "../../utils/sterilizers.js"
@@ -13,29 +14,27 @@ export default asyncHandler(async (req, res, next) => {
         )
     }
 
-    let user = await User.findOne({ 
-        where: { email: req.body.email } 
+    // login
+    const authenticateUser = await authenticateUserLoginDetails({  
+        email: req.body.email,
+        password: req.body.password
     })
 
-    if(!user) {
+    if(authenticateUser === false) {
         next(
-            new AppError({res, statusCode: 400, message: 'User does not exists 🙂'})
+            new AppError({res, statusCode: 400, message: 'Invalid login credentials 🙂'})
         )
     }
 
-    const comparePassword = await compareHash({ hashed: user.password, string: req.body.password })
+    let user  = authenticateUser
 
-    if(comparePassword === false) {
-        next(
-            new AppError({res, statusCode: 400, message: 'Invalid login credentials' })
-        )
-    }
-    
-    const auth_Token = createAuthToken(user)
+    // console.log(user);
 
-    user = sterilizeUserModel(user.get())
+    const auth_token = createAuthToken(user)
 
-    return res.status(200).json({ message: 'Login successful', user, auth_Token  })
+    user = sterilizeUserModel(user)
+
+    return res.status(200).json({ message: 'Login successful', user, auth_token  })
 
 
 })
