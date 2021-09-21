@@ -35,11 +35,11 @@ export const fundUserWallet = async ({ amount, email }) =>  {
     return true
 }
 
-export const transferFundsToAnotherUser = async ({ amount, senderEmail, destinationEmail }) => {
+export const transferFundsToAnotherUser = async ({ amount, senderEmail, destination_email }) => {
 
     await debitUserWallet({email: senderEmail, amount})
     
-    await creditUserWallet({email: destinationEmail, amount}) 
+    await creditUserWallet({email: destination_email, amount}) 
 
     return true
 

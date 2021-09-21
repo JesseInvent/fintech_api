@@ -18,7 +18,7 @@ Wallet.init(
             allowNull: false
         },
         amount: {
-            type: DataTypes.INTEGER,
+            type: DataTypes.INTEGER.UNSIGNED,
             allowNull: false,
             defaultValue: 0
         },

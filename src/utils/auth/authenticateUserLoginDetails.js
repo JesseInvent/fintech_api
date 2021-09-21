@@ -17,6 +17,6 @@ export default async ({ email, password }) => {
        return false
     }
 
-    return user.get()
+    return user.toJSON()
       
 }

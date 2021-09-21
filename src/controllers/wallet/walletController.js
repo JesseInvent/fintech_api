@@ -3,9 +3,22 @@ import Wallet from "../../models/Wallet.js"
 import AppError from "../../utils/AppError.js"
 import asyncHandler from "../../utils/asyncHandler.js"
 import authenticateUserLoginDetails from "../../utils/auth/authenticateUserLoginDetails.js"
+import { sterilizeWalletModel } from "../../utils/sterilizers.js"
 import depositToBank from "../../utils/wallet/depositToBank.js"
 import { debitUserWallet, fundUserWallet, transferFundsToAnotherUser } from "../../utils/wallet/userWalletFunctions.js"
 
+
+export const getUserWallet = asyncHandler( async (req, res, next) => {
+
+    let user_wallet = await Wallet.findOne({
+        where: { email: req.user.email }
+    })
+
+    user_wallet = sterilizeWalletModel(user_wallet.toJSON())
+
+    return res.status(200).json({ status: 'success', message: "", user_wallet })
+
+})
 
 export const fundWallet = asyncHandler( async (req, res, next) => {
 
@@ -27,7 +40,7 @@ export const fundWallet = asyncHandler( async (req, res, next) => {
 
 export const transferFundsToUser = asyncHandler( async (req, res, next) => {
 
-    if(!req.body.destinationEmail || !req.body.amount) {
+    if(!req.body.destination_email || !req.body.amount) {
         next(
             new AppError({res, statusCode: 400, message: 'You missed a required field 😕'})
         )
@@ -44,9 +57,13 @@ export const transferFundsToUser = asyncHandler( async (req, res, next) => {
        )
     }
 
+    /**
+     * Possible 2FA token or password verification feature
+     * Possible destination_email verification feature
+     */
     const result = transferFundsToAnotherUser({
                         senderEmail: req.user.email, 
-                        destinationEmail: req.body.destinationEmail,
+                        destination_email: req.body.destination_email,
                         amount: req.body.amount
                     })
 
@@ -80,7 +97,7 @@ export const withdrawFromUserWallet = asyncHandler( async (req, res, next) => {
 
     if(user === false) {
         next(
-            new AppError({res, statusCode: 401, message: 'Could not authenicate your account 😕'})
+            new AppError({res, statusCode: 401, message: 'Could not authenticate user account 😕'})
         ) 
     }
 
@@ -93,6 +110,7 @@ export const withdrawFromUserWallet = asyncHandler( async (req, res, next) => {
 
 
     /**
+     * Possible feature:
      * Use payment gateway to transfer funds to user account
      * After success send email to user
      */
@@ -109,7 +127,7 @@ export const withdrawFromUserWallet = asyncHandler( async (req, res, next) => {
 
       // Send withdrawal email to user.email
 
-      res.status(200).json({ status: 'success', message: 'Withdrawal successfully made' })
+      res.status(200).json({ status: 'success', message: 'Withdrawal successfully made 🙂' })
 
     }
 

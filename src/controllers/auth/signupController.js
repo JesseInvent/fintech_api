@@ -15,7 +15,7 @@ export default asyncHandler( async (req, res, next) => {
 
     if (req.body.password !== req.body.confirm_password) {
         next(
-            new AppError({ res, statusCode: 400, message: "Passwords do not 😔"})
+            new AppError({ res, statusCode: 400, message: "Passwords do not match 😔"})
          )
     }
 
@@ -41,8 +41,8 @@ export default asyncHandler( async (req, res, next) => {
 
     const auth_token = createAuthToken(user)
 
-    user = sterilizeUserModel(user.get())
-    wallet = sterilizeWalletModel(wallet.get())
+    user = sterilizeUserModel(user.toJSON())
+    wallet = sterilizeWalletModel(wallet.toJSON())
 
     // Send successful signup email
 

@@ -102,7 +102,7 @@ describe('Wallet functions unit tests', () => {
         // Transfer funds from user 1 to user 2 wallet 
         await transferFundsToAnotherUser({
                 senderEmail: user1.email,
-                destinationEmail: user2.email,
+                destination_email: user2.email,
                 amount: transferAmount
             })
 

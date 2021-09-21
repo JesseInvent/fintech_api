@@ -19,12 +19,39 @@ describe('Application main feauture tests', () => {
         })
     })
 
+    it('Tests a user cannot get wallet without auth token', async () => {
+
+        await User.signUp()
+
+        const response = await request(app).get('/api/v1/wallet/get')
+
+        assert.equal(401, response.status)
+
+    }) 
+
+    it('Tests a user can get wallet with valid auth token', async () => {
+
+        await User.signUp()
+        const loginResponse = await User.login()
+ 
+        const { auth_token } = loginResponse.body
+
+        const response = await request(app).get('/api/v1/wallet/get')   
+                                        .set('Authorization', `Bearer ${auth_token}`)
+
+        // console.log(response.body);
+
+        assert.equal(200, response.status)
+        assert.exists(response.body.user_wallet)
+
+    }) 
+
     it('Tests a user must provide auth token to add bank account details', async () => {
 
        await User.signUp()
 
-       const response = await request(app)
-                    .post('/api/v1/wallet/add_beneficiary').send(User.getUserBankDetails())
+       const response = await request(app).post('/api/v1/wallet/add_beneficiary')
+                                    .send(User.getUserBankDetails())
 
        assert.equal(401, response.statusCode)
 
@@ -104,7 +131,7 @@ describe('Application main feauture tests', () => {
 
         const response = await request(app).post('/api/v1/wallet/transfer')
         .set('Authorization', `Bearer ${user1_auth_token}`)
-        .send({ destinationEmail: user2.email, amount: 5000 })
+        .send({ destination_email: user2.email, amount: 5000 })
 
         // console.log(response.body);
 
@@ -129,7 +156,7 @@ describe('Application main feauture tests', () => {
 
         const response = await request(app).post('/api/v1/wallet/transfer')
         .set('Authorization', `Bearer ${user1_auth_token}`)
-        .send({ destinationEmail: user2.email, amount: 5000 })
+        .send({ destination_email: user2.email, amount: 5000 })
 
         // console.log(response);
 

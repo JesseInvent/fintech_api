@@ -1,5 +1,4 @@
 import express, { json } from "express"
-import connect from "./DB/connect.js"
 import dotenv from "dotenv"
 import morgan from "morgan"
 import cors from "cors"
@@ -11,8 +10,6 @@ import paymentRoutes from "./routes/v1/paymentRoutes.js"
 import AppError from "./utils/AppError.js"
 
 dotenv.config()
-
-// await connect()
 
 const app = express()
 

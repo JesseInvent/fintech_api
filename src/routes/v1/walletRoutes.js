@@ -1,6 +1,6 @@
 import { Router } from "express"
 import { addBeneficiary } from "../../controllers/wallet/beneficiaryController.js"
-import { fundWallet, transferFundsToUser, withdrawFromUserWallet } from "../../controllers/wallet/walletController.js"
+import { fundWallet, getUserWallet, transferFundsToUser, withdrawFromUserWallet } from "../../controllers/wallet/walletController.js"
 import verifyUserAuthToken from "../../middlewares/auth/verifyUserAuthToken.js"
 
 const router = Router()
@@ -9,6 +9,14 @@ const router = Router()
 router.get('/', (req, res, next) => {
     return res.status(200).json({ message: "App wallet features routes" })
 })
+
+// ** /api/v1/wallet/get
+router.get('/get', verifyUserAuthToken, getUserWallet)
+
+
+/**
+ * Possible live account number verification endpoints
+ */
 
 // ** /api/v1/wallet/add_beneficiary 
 router.post('/add_beneficiary', verifyUserAuthToken, addBeneficiary)
